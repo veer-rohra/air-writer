@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Air Writer — Draw with your hand</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #06060f;
+      --accent: #00f5ff;
+      --accent2: #ff006e;
+      --text: #e8e8f0;
+      --muted: rgba(255,255,255,0.38);
+      --card: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── Custom cursor ── */
+    #cursor {
+      position: fixed;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 18px var(--accent), 0 0 6px var(--accent);
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: background 0.2s, box-shadow 0.2s, width 0.15s, height 0.15s;
+    }
+    #cursor.big {
+      width: 36px; height: 36px;
+      background: transparent;
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 18px var(--accent);
+    }
+
+    /* ── Stars ── */
+    #stars {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+      overflow: hidden;
+    }
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: white;
+      animation: twinkle var(--d) ease-in-out infinite;
+      opacity: 0;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; }
+      50% { opacity: var(--op); }
+    }
+
+    /* ── Layout ── */
+    section { position: relative; z-index: 1; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 48px;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(18px);
+      background: rgba(6,6,15,0.7);
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px; font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .nav-logo span:first-child { color: var(--accent); text-shadow: 0 0 14px var(--accent); }
+    .nav-logo span:last-child  { color: var(--muted); }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--text); }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-cta {
+      background: var(--accent) !important;
+      color: var(--bg) !important;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-weight: 400;
+      box-shadow: 0 0 18px rgba(0,245,255,0.35);
+      transition: box-shadow 0.2s !important;
+    }
+    .nav-cta:hover { box-shadow: 0 0 28px rgba(0,245,255,0.6) !important; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+    }
+    .hero-eyebrow {
+      font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 24px;
+      opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
+    }
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(52px, 10vw, 110px);
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -3px;
+      margin-bottom: 28px;
+      opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+    }
+    h1 .glow { color: var(--accent); text-shadow: 0 0 60px rgba(0,245,255,0.5), 0 0 20px rgba(0,245,255,0.4); }
+    h1 .dim  { color: rgba(255,255,255,0.22); }
+    .hero-sub {
+      max-width: 520px;
+      font-size: 15px; line-height: 1.7;
+      color: var(--muted);
+      margin-bottom: 44px;
+      opacity: 0; animation: fadeUp 0.7s 0.5s forwards;
+    }
+    .hero-btns {
+      display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
+      opacity: 0; animation: fadeUp 0.7s 0.65s forwards;
+    }
+    .btn {
+      padding: 13px 28px;
+      border-radius: 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      cursor: none;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      box-shadow: 0 0 24px rgba(0,245,255,0.4);
+    }
+    .btn-primary:hover { box-shadow: 0 0 40px rgba(0,245,255,0.65); transform: translateY(-2px); }
+    .btn-ghost {
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: var(--card);
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.25); transform: translateY(-2px); }
+
+    /* Canvas demo */
+    .hero-canvas-wrap {
+      margin-top: 70px;
+      width: min(700px, 90vw);
+      aspect-ratio: 16/9;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+      opacity: 0; animation: fadeUp 0.9s 0.8s forwards;
+      box-shadow: 0 0 80px rgba(0,245,255,0.08), 0 40px 80px rgba(0,0,0,0.5);
+    }
+    #demoCanvas { width: 100%; height: 100%; display: block; background: #080818; }
+
+    /* ── FEATURES ── */
+    #features {
+      padding: 120px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-label {
+      font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 800; letter-spacing: -1.5px;
+      margin-bottom: 64px;
+      line-height: 1.1;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 32px;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .feature-card:hover {
+      border-color: rgba(0,245,255,0.25);
+      transform: translateY(-4px);
+    }
+    .feature-icon {
+      font-size: 28px; margin-bottom: 16px;
+    }
+    .feature-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 17px; font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .feature-card p { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+    /* ── GESTURES ── */
+    #gestures {
+      padding: 80px 24px 120px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .gesture-list {
+      display: flex; flex-direction: column; gap: 12px;
+      margin-top: 48px;
+    }
+    .gesture-row {
+      display: flex; align-items: center; gap: 20px;
+      padding: 20px 28px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: border-color 0.2s;
+    }
+    .gesture-row:hover { border-color: rgba(0,245,255,0.2); }
+    .gesture-emoji { font-size: 26px; flex-shrink: 0; width: 36px; text-align: center; }
+    .gesture-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 15px; font-weight: 700;
+      min-width: 160px;
+    }
+    .gesture-desc { font-size: 13px; color: var(--muted); }
+    .gesture-badge {
+      margin-left: auto;
+      font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 100px;
+    }
+    .badge-draw   { background: rgba(0,245,255,0.12);  color: var(--accent); }
+    .badge-pause  { background: rgba(255,255,255,0.08); color: var(--muted); }
+    .badge-pick   { background: rgba(255,0,110,0.12);   color: var(--accent2); }
+    .badge-erase  { background: rgba(255,165,0,0.12);   color: #ffa500; }
+
+    /* ── INSTALL ── */
+    #install {
+      padding: 80px 24px 140px;
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    #install .section-title { margin-bottom: 12px; }
+    #install .section-sub { color: var(--muted); font-size: 14px; margin-bottom: 48px; line-height: 1.7; }
+    .code-block {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 32px;
+      text-align: left;
+      font-size: 13px;
+      line-height: 2;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .code-block .comment { color: rgba(255,255,255,0.25); }
+    .code-block .cmd { color: var(--accent); }
+    .code-block .arg { color: #ffbe0b; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px; color: var(--muted);
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      nav { padding: 14px 20px; }
+      .nav-links { gap: 16px; }
+      footer { flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<!-- Stars -->
+<div id="stars"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-logo"><span>AIR</span><span>WRITE</span></div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#gestures">Gestures</a>
+    <a href="#install">Install</a>
+    <a href="https://github.com/veer-rohra/air-writer" class="nav-cta" target="_blank">GitHub →</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section id="hero">
+  <p class="hero-eyebrow">✦ Computer Vision · Hand Tracking · OpenCV</p>
+  <h1>
+    <span class="dim">draw</span><br>
+    <span class="glow">in the air</span>
+  </h1>
+  <p class="hero-sub">
+    Turn your index finger into a glowing brush. No stylus, no tablet —
+    just your hand and a webcam.
+  </p>
+  <div class="hero-btns">
+    <a href="https://github.com/veer-rohra/air-writer" class="btn btn-primary" target="_blank">View on GitHub</a>
+    <a href="#install" class="btn btn-ghost">Get Started ↓</a>
+  </div>
+
+  <div class="hero-canvas-wrap">
+    <canvas id="demoCanvas"></canvas>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features">
+  <p class="section-label">✦ What's inside</p>
+  <h2 class="section-title">Everything you need<br>to write in the air.</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🌟</div>
+      <h3>Neon Glow Trails</h3>
+      <p>Multi-layered bloom effect on every stroke — a wide outer halo and a bright white inner core.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💨</div>
+      <h3>Fading Strokes</h3>
+      <p>Drawings dissolve over ~3 seconds. Older segments fade first, giving that cinematic light-in-air effect.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎨</div>
+      <h3>Radial Colour Picker</h3>
+      <p>Hold a fist to summon a circular palette of 8 colours around your wrist. Hover to select, open hand to dismiss.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>Velocity-Based Width</h3>
+      <p>Strokes get thinner when you move fast and thicker when you slow down — just like a real brush.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🖐️</div>
+      <h3>Gesture Controls</h3>
+      <p>Draw, pause, erase, and pick colours all through natural hand gestures — no keyboard needed.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📦</div>
+      <h3>Zero Hardware</h3>
+      <p>All you need is Python 3.10 and a webcam. Built on MediaPipe and OpenCV — both free and open source.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Gestures -->
+<section id="gestures">
+  <p class="section-label">✦ Controls</p>
+  <h2 class="section-title">All gestures.</h2>
+  <div class="gesture-list">
+    <div class="gesture-row">
+      <span class="gesture-emoji">☝️</span>
+      <span class="gesture-name">Index finger up</span>
+      <span class="gesture-desc">Draw on the canvas</span>
+      <span class="gesture-badge badge-draw">Draw</span>
+    </div>
+    <div class="gesture-row">
+      <span class="gesture-emoji">✌️</span>
+      <span class="gesture-name">Two fingers up</span>
+      <span class="gesture-desc">Hover without drawing — pen lift</span>
+      <span class="gesture-badge badge-pause">Pause</span>
+    </div>
+    <div class="gesture-row">
+      <span class="gesture-emoji">✊</span>
+      <span class="gesture-name">Fist (hold 0.7s)</span>
+      <span class="gesture-desc">Open the radial colour picker</span>
+      <span class="gesture-badge badge-pick">Colour</span>
+    </div>
+    <div class="gesture-row">
+      <span class="gesture-emoji">🖐️</span>
+      <span class="gesture-name">Open palm</span>
+      <span class="gesture-desc">Erase strokes under your hand</span>
+      <span class="gesture-badge badge-erase">Erase</span>
+    </div>
+    <div class="gesture-row">
+      <span class="gesture-emoji">⌨️</span>
+      <span class="gesture-name">C key</span>
+      <span class="gesture-desc">Clear the entire canvas</span>
+      <span class="gesture-badge badge-pause">Clear</span>
+    </div>
+  </div>
+</section>
+
+<!-- Install -->
+<section id="install">
+  <p class="section-label">✦ Setup</p>
+  <h2 class="section-title">Up in 3 steps.</h2>
+  <p class="section-sub">Requires Python 3.8–3.11. MediaPipe doesn't support 3.12+.</p>
+
+  <div class="code-block">
+    <span class="comment"># 1. Clone & enter</span><br>
+    <span class="cmd">git clone</span> <span class="arg">https://github.com/veer-rohra/air-writer.git</span><br>
+    <span class="cmd">cd</span> air-writer
+  </div>
+  <div class="code-block">
+    <span class="comment"># 2. Create environment & install</span><br>
+    <span class="cmd">conda create</span> <span class="arg">-n airwriter python=3.10 -y</span><br>
+    <span class="cmd">conda activate</span> airwriter<br>
+    <span class="cmd">pip install</span> <span class="arg">opencv-python mediapipe==0.10.9 numpy</span>
+  </div>
+  <div class="code-block">
+    <span class="comment"># 3. Run</span><br>
+    <span class="cmd">python</span> air_writer_v2.py
+  </div>
+
+  <a href="https://github.com/veer-rohra/air-writer" class="btn btn-primary" target="_blank" style="display:inline-block; margin-top: 16px;">
+    View Source on GitHub →
+  </a>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div>Built by <a href="https://github.com/veer-rohra" target="_blank">Veer Rohra</a> · MIT License</div>
+  <div><a href="https://github.com/veer-rohra/air-writer" target="_blank">GitHub</a></div>
+</footer>
+
+<script>
+  // ── Custom cursor ──────────────────────────────────────────────
+  const cur = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX + 'px';
+    cur.style.top  = e.clientY + 'px';
+  });
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => cur.classList.add('big'));
+    el.addEventListener('mouseleave', () => cur.classList.remove('big'));
+  });
+
+  // ── Stars ──────────────────────────────────────────────────────
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 120; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() < 0.25 ? 1.5 : 0.8;
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%; top:${Math.random()*100}%;
+      --op:${0.15 + Math.random()*0.5};
+      --d:${2 + Math.random()*5}s;
+      animation-delay:${Math.random()*6}s;
+    `;
+    starsEl.appendChild(s);
+  }
+
+  // ── Animated demo canvas ───────────────────────────────────────
+  const canvas = document.getElementById('demoCanvas');
+  const ctx    = canvas.getContext('2d');
+  canvas.width  = canvas.offsetWidth  * devicePixelRatio;
+  canvas.height = canvas.offsetHeight * devicePixelRatio;
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+  const CW = canvas.offsetWidth, CH = canvas.offsetHeight;
+
+  const DEMO_COLORS = ['#00f5ff','#ff006e','#ffbe0b','#8338ec','#06d6a0'];
+  const FADE = 3000;
+
+  // Pre-defined demo paths (normalised 0-1)
+  const paths = [
+    { color: '#00f5ff', pts: [[.15,.7],[.18,.45],[.22,.35],[.28,.45],[.28,.7]] },           // A-like
+    { color: '#ff006e', pts: [[.36,.7],[.36,.35],[.44,.35],[.47,.5],[.44,.65],[.36,.65]] },  // P-like
+    { color: '#ffbe0b', pts: [[.55,.35],[.55,.7],[.62,.7]] },                                // L
+    { color: '#8338ec', pts: [[.7,.35],[.78,.35],[.82,.5],[.78,.65],[.7,.65],[.7,.35]] },    // closed loop
+  ];
+
+  let segments = [];
+  let animPaths = paths.map(p => ({ ...p, idx: 0, pts: p.pts.map(([x,y])=>({x:x*CW, y:y*CH})) }));
+  let pathIdx = 0, ptIdx = 0, drawing = true;
+  let prev = null;
+
+  function addSeg(p1, p2, color) {
+    segments.push({ x1:p1.x, y1:p1.y, x2:p2.x, y2:p2.y, color, birth: Date.now() });
+  }
+
+  function drawSeg(seg, now) {
+    const age = now - seg.birth;
+    const alpha = Math.max(0, 1 - age / FADE);
+    if (alpha <= 0) return;
+    const c = seg.color;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = c;
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.shadowColor = c;
+    ctx.shadowBlur = 14;
+    ctx.beginPath();
+    ctx.moveTo(seg.x1, seg.y1);
+    ctx.lineTo(seg.x2, seg.y2);
+    ctx.stroke();
+    // core
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = alpha * 0.5;
+    ctx.shadowBlur = 4;
+    ctx.beginPath();
+    ctx.moveTo(seg.x1, seg.y1);
+    ctx.lineTo(seg.x2, seg.y2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  let last = 0;
+  function loop(ts) {
+    ctx.clearRect(0, 0, CW, CH);
+    const now = Date.now();
+    segments = segments.filter(s => now - s.birth < FADE);
+    segments.forEach(s => drawSeg(s, now));
+
+    // Advance demo path
+    if (ts - last > 40) {
+      last = ts;
+      if (pathIdx < animPaths.length) {
+        const path = animPaths[pathIdx];
+        if (ptIdx < path.pts.length) {
+          const pt = path.pts[ptIdx];
+          if (prev) addSeg(prev, pt, path.color);
+          prev = pt;
+          ptIdx++;
+        } else {
+          pathIdx++;
+          ptIdx = 0;
+          prev = null;
+          if (pathIdx >= animPaths.length) {
+            setTimeout(() => { segments = []; pathIdx = 0; ptIdx = 0; prev = null; }, 2000);
+          }
+        }
+      }
+    }
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+</script>
+</body>
+</html>
