@@ -13,6 +13,7 @@
       --bg: #06060f;
       --accent: #00f5ff;
       --accent2: #ff006e;
+      --accent3: #ffbe0b;
       --text: #e8e8f0;
       --muted: rgba(255,255,255,0.38);
       --card: rgba(255,255,255,0.04);
@@ -48,6 +49,25 @@
       box-shadow: 0 0 18px var(--accent);
     }
 
+    /* ── Mobile warning banner ── */
+    #mobile-warn {
+      display: none;
+      background: rgba(255,190,11,0.12);
+      border-bottom: 1px solid rgba(255,190,11,0.25);
+      color: var(--accent3);
+      text-align: center;
+      padding: 10px 20px;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      position: relative;
+      z-index: 200;
+    }
+    @media (max-width: 768px) {
+      #mobile-warn { display: block; }
+      body { cursor: auto; }
+      #cursor { display: none; }
+    }
+
     /* ── Stars ── */
     #stars {
       position: fixed; inset: 0;
@@ -68,6 +88,23 @@
 
     /* ── Layout ── */
     section { position: relative; z-index: 1; }
+
+    /* ── Scroll reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    .reveal-delay-5 { transition-delay: 0.5s; }
+    .reveal-delay-6 { transition-delay: 0.6s; }
 
     /* ── NAV ── */
     nav {
@@ -178,6 +215,56 @@
       box-shadow: 0 0 80px rgba(0,245,255,0.08), 0 40px 80px rgba(0,0,0,0.5);
     }
     #demoCanvas { width: 100%; height: 100%; display: block; background: #080818; }
+    .canvas-label {
+      position: absolute; bottom: 12px; right: 16px;
+      font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+    }
+
+    /* ── WHAT'S NEW BANNER ── */
+    #whats-new {
+      padding: 60px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .whats-new-inner {
+      background: linear-gradient(135deg, rgba(0,245,255,0.06), rgba(255,0,110,0.06));
+      border: 1px solid rgba(0,245,255,0.15);
+      border-radius: 18px;
+      padding: 40px 48px;
+      display: flex;
+      gap: 48px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .whats-new-label {
+      font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 10px;
+    }
+    .whats-new-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 26px; font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+    .whats-new-sub {
+      font-size: 12px; color: var(--muted); margin-bottom: 0;
+    }
+    .whats-new-pills {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      flex: 1; min-width: 260px; align-items: center;
+    }
+    .pill {
+      padding: 7px 14px;
+      border-radius: 100px;
+      font-size: 12px;
+      letter-spacing: 0.3px;
+      border: 1px solid;
+    }
+    .pill-cyan   { background: rgba(0,245,255,0.08);  border-color: rgba(0,245,255,0.25);  color: var(--accent); }
+    .pill-pink   { background: rgba(255,0,110,0.08);  border-color: rgba(255,0,110,0.25);  color: var(--accent2); }
+    .pill-yellow { background: rgba(255,190,11,0.08); border-color: rgba(255,190,11,0.25); color: var(--accent3); }
+    .pill-purple { background: rgba(131,56,236,0.08); border-color: rgba(131,56,236,0.3);  color: #8338ec; }
 
     /* ── FEATURES ── */
     #features {
@@ -212,9 +299,7 @@
       border-color: rgba(0,245,255,0.25);
       transform: translateY(-4px);
     }
-    .feature-icon {
-      font-size: 28px; margin-bottom: 16px;
-    }
+    .feature-icon { font-size: 28px; margin-bottom: 16px; }
     .feature-card h3 {
       font-family: 'Syne', sans-serif;
       font-size: 17px; font-weight: 700;
@@ -252,11 +337,19 @@
       margin-left: auto;
       font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
       padding: 4px 10px; border-radius: 100px;
+      white-space: nowrap;
     }
     .badge-draw   { background: rgba(0,245,255,0.12);  color: var(--accent); }
     .badge-pause  { background: rgba(255,255,255,0.08); color: var(--muted); }
     .badge-pick   { background: rgba(255,0,110,0.12);   color: var(--accent2); }
     .badge-erase  { background: rgba(255,165,0,0.12);   color: #ffa500; }
+    .badge-new    { background: rgba(131,56,236,0.15);  color: #a06cf0; }
+    .gesture-new-tag {
+      font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
+      background: rgba(131,56,236,0.2); color: #a06cf0;
+      padding: 2px 7px; border-radius: 100px;
+      margin-left: 8px; vertical-align: middle;
+    }
 
     /* ── INSTALL ── */
     #install {
@@ -279,18 +372,41 @@
       position: relative;
     }
     .code-block .comment { color: rgba(255,255,255,0.25); }
-    .code-block .cmd { color: var(--accent); }
-    .code-block .arg { color: #ffbe0b; }
+    .code-block .cmd     { color: var(--accent); }
+    .code-block .arg     { color: #ffbe0b; }
 
     /* ── FOOTER ── */
     footer {
       border-top: 1px solid var(--border);
-      padding: 32px 48px;
+      padding: 40px 48px;
       display: flex; align-items: center; justify-content: space-between;
       font-size: 12px; color: var(--muted);
+      flex-wrap: wrap; gap: 16px;
     }
-    footer a { color: var(--muted); text-decoration: none; }
+    footer a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
     footer a:hover { color: var(--text); }
+    .footer-star {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .star-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(255,190,11,0.1);
+      border: 1px solid rgba(255,190,11,0.25);
+      color: var(--accent3) !important;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      text-decoration: none !important;
+      transition: background 0.2s, border-color 0.2s !important;
+      cursor: none;
+    }
+    .star-btn:hover {
+      background: rgba(255,190,11,0.18) !important;
+      border-color: rgba(255,190,11,0.4) !important;
+      color: var(--accent3) !important;
+    }
+    .footer-credits { color: var(--muted); font-size: 11px; }
+    .footer-credits span { color: rgba(255,255,255,0.2); margin: 0 6px; }
 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(24px); }
@@ -301,6 +417,8 @@
       nav { padding: 14px 20px; }
       .nav-links { gap: 16px; }
       footer { flex-direction: column; gap: 12px; text-align: center; }
+      .whats-new-inner { padding: 28px 24px; gap: 28px; }
+      .gesture-name { min-width: 100px; }
     }
   </style>
 </head>
@@ -308,13 +426,19 @@
 
 <div id="cursor"></div>
 
+<!-- Mobile Warning -->
+<div id="mobile-warn">
+  ⚠️ Air Writer requires a webcam and Python — best experienced on desktop.
+</div>
+
 <!-- Stars -->
 <div id="stars"></div>
 
 <!-- Nav -->
 <nav>
-  <div class="nav-logo"><span>AIR</span><span>WRITE</span></div>
+  <div class="nav-logo"><span>AIR</span><span>WRITER</span></div>
   <div class="nav-links">
+    <a href="#whats-new">What's New</a>
     <a href="#features">Features</a>
     <a href="#gestures">Gestures</a>
     <a href="#install">Install</a>
@@ -340,40 +464,61 @@
 
   <div class="hero-canvas-wrap">
     <canvas id="demoCanvas"></canvas>
+    <span class="canvas-label">Live demo · loops forever</span>
+  </div>
+</section>
+
+<!-- What's New in v3 -->
+<section id="whats-new">
+  <div class="whats-new-inner reveal">
+    <div>
+      <p class="whats-new-label">✦ Just shipped</p>
+      <h2 class="whats-new-title">What's new in v3</h2>
+      <p class="whats-new-sub">A big update to gestures, canvas control, and code quality.</p>
+    </div>
+    <div class="whats-new-pills">
+      <span class="pill pill-cyan">✦ Undo (Z key)</span>
+      <span class="pill pill-cyan">✦ Save canvas (S key)</span>
+      <span class="pill pill-yellow">✦ Pinch-to-resize brush</span>
+      <span class="pill pill-yellow">✦ Fade toggle (F key)</span>
+      <span class="pill pill-pink">✦ Dark / Light background (B key)</span>
+      <span class="pill pill-purple">✦ Two-hand support</span>
+      <span class="pill pill-purple">✦ Camera error handling</span>
+    </div>
   </div>
 </section>
 
 <!-- Features -->
 <section id="features">
-  <p class="section-label">✦ What's inside</p>
-  <h2 class="section-title">Everything you need<br>to write in the air.</h2>
+  <p class="section-label reveal">✦ What's inside</p>
+  <h2 class="section-title reveal">Everything you need<br>to write in the air.</h2>
   <div class="features-grid">
-    <div class="feature-card">
+    <div class="feature-card reveal reveal-delay-1">
       <div class="feature-icon">🌟</div>
       <h3>Neon Glow Trails</h3>
       <p>Multi-layered bloom effect on every stroke — a wide outer halo and a bright white inner core.</p>
     </div>
-    <div class="feature-card">
+    <div class="feature-card reveal reveal-delay-2">
       <div class="feature-icon">💨</div>
       <h3>Fading Strokes</h3>
-      <p>Drawings dissolve over ~3 seconds. Older segments fade first, giving that cinematic light-in-air effect.</p>
+      <p>Drawings dissolve over ~3 seconds. Toggle fade on/off with <strong>F</strong> to keep strokes permanently.</p>
     </div>
-    <div class="feature-card">
+    <div class="feature-card reveal reveal-delay-3">
       <div class="feature-icon">🎨</div>
       <h3>Radial Colour Picker</h3>
       <p>Hold a fist to summon a circular palette of 8 colours around your wrist. Hover to select, open hand to dismiss.</p>
     </div>
-    <div class="feature-card">
-      <div class="feature-icon">⚡</div>
-      <h3>Velocity-Based Width</h3>
-      <p>Strokes get thinner when you move fast and thicker when you slow down — just like a real brush.</p>
+    <div class="feature-card reveal reveal-delay-4">
+      <div class="feature-icon">🤌</div>
+      <h3>Pinch-to-Resize</h3>
+      <p>Pinch your thumb and index finger together or apart to dynamically resize your brush from 2px to 30px.</p>
     </div>
-    <div class="feature-card">
+    <div class="feature-card reveal reveal-delay-5">
       <div class="feature-icon">🖐️</div>
-      <h3>Gesture Controls</h3>
-      <p>Draw, pause, erase, and pick colours all through natural hand gestures — no keyboard needed.</p>
+      <h3>Two-Hand Support</h3>
+      <p>Right hand draws, left hand erases. Both tracked simultaneously for a natural, fluid experience.</p>
     </div>
-    <div class="feature-card">
+    <div class="feature-card reveal reveal-delay-6">
       <div class="feature-icon">📦</div>
       <h3>Zero Hardware</h3>
       <p>All you need is Python 3.10 and a webcam. Built on MediaPipe and OpenCV — both free and open source.</p>
@@ -383,34 +528,64 @@
 
 <!-- Gestures -->
 <section id="gestures">
-  <p class="section-label">✦ Controls</p>
-  <h2 class="section-title">All gestures.</h2>
+  <p class="section-label reveal">✦ Controls</p>
+  <h2 class="section-title reveal">All gestures.</h2>
   <div class="gesture-list">
-    <div class="gesture-row">
+    <div class="gesture-row reveal reveal-delay-1">
       <span class="gesture-emoji">☝️</span>
       <span class="gesture-name">Index finger up</span>
       <span class="gesture-desc">Draw on the canvas</span>
       <span class="gesture-badge badge-draw">Draw</span>
     </div>
-    <div class="gesture-row">
+    <div class="gesture-row reveal reveal-delay-1">
+      <span class="gesture-emoji">🤌</span>
+      <span class="gesture-name">Pinch spread</span>
+      <span class="gesture-desc">Adjust brush size (2–30px)</span>
+      <span class="gesture-badge badge-draw">Brush <span class="gesture-new-tag">v3</span></span>
+    </div>
+    <div class="gesture-row reveal reveal-delay-2">
       <span class="gesture-emoji">✌️</span>
       <span class="gesture-name">Two fingers up</span>
       <span class="gesture-desc">Hover without drawing — pen lift</span>
       <span class="gesture-badge badge-pause">Pause</span>
     </div>
-    <div class="gesture-row">
+    <div class="gesture-row reveal reveal-delay-3">
       <span class="gesture-emoji">✊</span>
       <span class="gesture-name">Fist (hold 0.7s)</span>
       <span class="gesture-desc">Open the radial colour picker</span>
       <span class="gesture-badge badge-pick">Colour</span>
     </div>
-    <div class="gesture-row">
+    <div class="gesture-row reveal reveal-delay-3">
       <span class="gesture-emoji">🖐️</span>
       <span class="gesture-name">Open palm</span>
       <span class="gesture-desc">Erase strokes under your hand</span>
       <span class="gesture-badge badge-erase">Erase</span>
     </div>
-    <div class="gesture-row">
+    <div class="gesture-row reveal reveal-delay-4">
+      <span class="gesture-emoji">⌨️</span>
+      <span class="gesture-name">Z key</span>
+      <span class="gesture-desc">Undo the last stroke</span>
+      <span class="gesture-badge badge-new">Undo <span class="gesture-new-tag">v3</span></span>
+    </div>
+    <div class="gesture-row reveal reveal-delay-4">
+      <span class="gesture-emoji">⌨️</span>
+      <span class="gesture-name">S key</span>
+      <span class="gesture-desc">Save canvas as PNG to ~/air_writer_saves/</span>
+      <span class="gesture-badge badge-new">Save <span class="gesture-new-tag">v3</span></span>
+    </div>
+    <div class="gesture-row reveal reveal-delay-5">
+      <span class="gesture-emoji">⌨️</span>
+      <span class="gesture-name">F key</span>
+      <span class="gesture-desc">Toggle stroke fade on / off</span>
+      <span class="gesture-badge badge-new">Fade <span class="gesture-new-tag">v3</span></span>
+    </div>
+    <div class="gesture-row reveal reveal-delay-5">
+      <span class="gesture-emoji">⌨️</span>
+      <span class="gesture-name">B key</span>
+      <span class="gesture-desc">Toggle dark / light background</span>
+      <span class="gesture-badge badge-new">BG <span class="gesture-new-tag">v3</span></span>
+    </div>
+    <div class="gesture-row reveal reveal-delay-6">
       <span class="gesture-emoji">⌨️</span>
       <span class="gesture-name">C key</span>
       <span class="gesture-desc">Clear the entire canvas</span>
@@ -421,35 +596,45 @@
 
 <!-- Install -->
 <section id="install">
-  <p class="section-label">✦ Setup</p>
-  <h2 class="section-title">Up in 3 steps.</h2>
-  <p class="section-sub">Requires Python 3.8–3.11. MediaPipe doesn't support 3.12+.</p>
+  <p class="section-label reveal">✦ Setup</p>
+  <h2 class="section-title reveal">Up in 3 steps.</h2>
+  <p class="section-sub reveal">Requires Python 3.8–3.11. MediaPipe doesn't support 3.12+.</p>
 
-  <div class="code-block">
-    <span class="comment"># 1. Clone & enter</span><br>
+  <div class="code-block reveal reveal-delay-1">
+    <span class="comment"># 1. Clone &amp; enter</span><br>
     <span class="cmd">git clone</span> <span class="arg">https://github.com/veer-rohra/air-writer.git</span><br>
     <span class="cmd">cd</span> air-writer
   </div>
-  <div class="code-block">
-    <span class="comment"># 2. Create environment & install</span><br>
+  <div class="code-block reveal reveal-delay-2">
+    <span class="comment"># 2. Create environment &amp; install</span><br>
     <span class="cmd">conda create</span> <span class="arg">-n airwriter python=3.10 -y</span><br>
     <span class="cmd">conda activate</span> airwriter<br>
     <span class="cmd">pip install</span> <span class="arg">opencv-python mediapipe==0.10.9 numpy</span>
   </div>
-  <div class="code-block">
-    <span class="comment"># 3. Run</span><br>
-    <span class="cmd">python</span> air_writer_v2.py
+  <div class="code-block reveal reveal-delay-3">
+    <span class="comment"># 3. Run v3</span><br>
+    <span class="cmd">python</span> docs/air_writer_v3.py
   </div>
 
-  <a href="https://github.com/veer-rohra/air-writer" class="btn btn-primary" target="_blank" style="display:inline-block; margin-top: 16px;">
+  <a href="https://github.com/veer-rohra/air-writer" class="btn btn-primary reveal reveal-delay-4" target="_blank" style="display:inline-block; margin-top: 16px; cursor: none;">
     View Source on GitHub →
   </a>
 </section>
 
 <!-- Footer -->
 <footer>
-  <div>Built by <a href="https://github.com/veer-rohra" target="_blank">Veer Rohra</a> · MIT License</div>
-  <div><a href="https://github.com/veer-rohra/air-writer" target="_blank">GitHub</a></div>
+  <div>
+    Built by <a href="https://github.com/veer-rohra" target="_blank">Veer Rohra</a> · MIT License
+  </div>
+  <div class="footer-credits">
+    Powered by <span>·</span> MediaPipe <span>·</span> OpenCV <span>·</span> Python
+  </div>
+  <div class="footer-star">
+    <a href="https://github.com/veer-rohra/air-writer" class="star-btn" target="_blank">
+      ⭐ Star on GitHub
+    </a>
+    <a href="https://github.com/veer-rohra/air-writer" target="_blank">Source</a>
+  </div>
 </footer>
 
 <script>
@@ -480,85 +665,131 @@
     starsEl.appendChild(s);
   }
 
-  // ── Animated demo canvas ───────────────────────────────────────
+  // ── Scroll reveal (IntersectionObserver) ──────────────────────
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer  = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => observer.observe(el));
+
+  // ── Animated demo canvas (seamless loop) ──────────────────────
   const canvas = document.getElementById('demoCanvas');
   const ctx    = canvas.getContext('2d');
-  canvas.width  = canvas.offsetWidth  * devicePixelRatio;
-  canvas.height = canvas.offsetHeight * devicePixelRatio;
-  ctx.scale(devicePixelRatio, devicePixelRatio);
-  const CW = canvas.offsetWidth, CH = canvas.offsetHeight;
 
-  const DEMO_COLORS = ['#00f5ff','#ff006e','#ffbe0b','#8338ec','#06d6a0'];
-  const FADE = 3000;
+  function resizeCanvas() {
+    canvas.width  = canvas.offsetWidth  * devicePixelRatio;
+    canvas.height = canvas.offsetHeight * devicePixelRatio;
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
 
-  // Pre-defined demo paths (normalised 0-1)
-  const paths = [
-    { color: '#00f5ff', pts: [[.15,.7],[.18,.45],[.22,.35],[.28,.45],[.28,.7]] },           // A-like
-    { color: '#ff006e', pts: [[.36,.7],[.36,.35],[.44,.35],[.47,.5],[.44,.65],[.36,.65]] },  // P-like
-    { color: '#ffbe0b', pts: [[.55,.35],[.55,.7],[.62,.7]] },                                // L
-    { color: '#8338ec', pts: [[.7,.35],[.78,.35],[.82,.5],[.78,.65],[.7,.65],[.7,.35]] },    // closed loop
+  const CW = () => canvas.offsetWidth;
+  const CH = () => canvas.offsetHeight;
+
+  const FADE = 3200;
+
+  // Normalised path definitions
+  const pathDefs = [
+    { color: '#00f5ff', pts: [[.12,.72],[.15,.48],[.20,.36],[.26,.48],[.26,.72]] },
+    { color: '#ff006e', pts: [[.33,.72],[.33,.36],[.42,.36],[.46,.52],[.42,.66],[.33,.66]] },
+    { color: '#ffbe0b', pts: [[.52,.36],[.52,.72],[.60,.72]] },
+    { color: '#8338ec', pts: [[.67,.36],[.77,.36],[.82,.52],[.77,.66],[.67,.66],[.67,.36]] },
+    { color: '#06d6a0', pts: [[.10,.55],[.88,.55]] },
   ];
 
-  let segments = [];
-  let animPaths = paths.map(p => ({ ...p, idx: 0, pts: p.pts.map(([x,y])=>({x:x*CW, y:y*CH})) }));
-  let pathIdx = 0, ptIdx = 0, drawing = true;
-  let prev = null;
+  let segments  = [];
+  let pathIdx   = 0;
+  let ptIdx     = 0;
+  let prev      = null;
+  let lastStep  = 0;
+  let pauseUntil = 0;
 
   function addSeg(p1, p2, color) {
     segments.push({ x1:p1.x, y1:p1.y, x2:p2.x, y2:p2.y, color, birth: Date.now() });
   }
 
   function drawSeg(seg, now) {
-    const age = now - seg.birth;
+    const age   = now - seg.birth;
     const alpha = Math.max(0, 1 - age / FADE);
     if (alpha <= 0) return;
-    const c = seg.color;
     ctx.save();
     ctx.globalAlpha = alpha;
-    ctx.strokeStyle = c;
-    ctx.lineWidth = 3;
-    ctx.lineCap = 'round';
-    ctx.shadowColor = c;
-    ctx.shadowBlur = 14;
-    ctx.beginPath();
-    ctx.moveTo(seg.x1, seg.y1);
-    ctx.lineTo(seg.x2, seg.y2);
-    ctx.stroke();
-    // core
+    ctx.strokeStyle = seg.color;
+    ctx.lineWidth   = 3;
+    ctx.lineCap     = 'round';
+    ctx.shadowColor = seg.color;
+    ctx.shadowBlur  = 16;
+    ctx.beginPath(); ctx.moveTo(seg.x1, seg.y1); ctx.lineTo(seg.x2, seg.y2); ctx.stroke();
     ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 1;
-    ctx.globalAlpha = alpha * 0.5;
-    ctx.shadowBlur = 4;
-    ctx.beginPath();
-    ctx.moveTo(seg.x1, seg.y1);
-    ctx.lineTo(seg.x2, seg.y2);
-    ctx.stroke();
+    ctx.lineWidth   = 1;
+    ctx.globalAlpha = alpha * 0.45;
+    ctx.shadowBlur  = 4;
+    ctx.beginPath(); ctx.moveTo(seg.x1, seg.y1); ctx.lineTo(seg.x2, seg.y2); ctx.stroke();
     ctx.restore();
   }
 
-  let last = 0;
+  // Floating particles
+  const particles = Array.from({length: 18}, () => ({
+    x: Math.random(), y: Math.random(),
+    vx: (Math.random() - 0.5) * 0.0003,
+    vy: (Math.random() - 0.5) * 0.0003,
+    r:  0.5 + Math.random() * 1.5,
+    alpha: 0.1 + Math.random() * 0.25,
+    color: ['#00f5ff','#ff006e','#ffbe0b','#8338ec'][Math.floor(Math.random()*4)],
+  }));
+
+  function drawParticles() {
+    const w = CW(), h = CH();
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = 1; if (p.x > 1) p.x = 0;
+      if (p.y < 0) p.y = 1; if (p.y > 1) p.y = 0;
+      ctx.save();
+      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle   = p.color;
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur  = 6;
+      ctx.beginPath();
+      ctx.arc(p.x * w, p.y * h, p.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+  }
+
+  let rafLast = 0;
   function loop(ts) {
-    ctx.clearRect(0, 0, CW, CH);
+    const w = CW(), h = CH();
+    ctx.clearRect(0, 0, w, h);
     const now = Date.now();
+
+    // Prune faded
     segments = segments.filter(s => now - s.birth < FADE);
+
+    drawParticles();
     segments.forEach(s => drawSeg(s, now));
 
-    // Advance demo path
-    if (ts - last > 40) {
-      last = ts;
-      if (pathIdx < animPaths.length) {
-        const path = animPaths[pathIdx];
-        if (ptIdx < path.pts.length) {
-          const pt = path.pts[ptIdx];
+    // Advance path (seamless: restart immediately)
+    if (now > pauseUntil && ts - rafLast > 38) {
+      rafLast = ts;
+      if (pathIdx < pathDefs.length) {
+        const path = pathDefs[pathIdx];
+        const pts  = path.pts.map(([x,y]) => ({ x: x*w, y: y*h }));
+        if (ptIdx < pts.length) {
+          const pt = pts[ptIdx];
           if (prev) addSeg(prev, pt, path.color);
           prev = pt;
           ptIdx++;
         } else {
-          pathIdx++;
-          ptIdx = 0;
-          prev = null;
-          if (pathIdx >= animPaths.length) {
-            setTimeout(() => { segments = []; pathIdx = 0; ptIdx = 0; prev = null; }, 2000);
+          pathIdx++; ptIdx = 0; prev = null;
+          if (pathIdx >= pathDefs.length) {
+            pathIdx = 0;
+            pauseUntil = now + 600; // tiny pause then seamlessly restart
           }
         }
       }
