@@ -5,7 +5,6 @@
 ### Draw in the air using hand gestures  
 ### Powered by OpenCV + MediaPipe
 
-<img src="https://via.placeholder.com/1200x400/0A2540/00FF9F?text=AIR+WRITER+-+Gesture+Drawing" alt="Air Writer Banner"/>
 
 <br/>
 
@@ -195,18 +194,7 @@ python docs/air_writer_v3.py
 
 ---
 
-# 📸 Screenshots
 
-<div align="center">
-
-<img src="https://via.placeholder.com/600x400/1a1a2e/00ff9f?text=Air+Writer+UI" width="45%" />
-<img src="https://via.placeholder.com/600x400/1a1a2e/00ccff?text=Color+Picker" width="45%" />
-
-<br/><br/>
-
-<img src="https://via.placeholder.com/700x400/1a1a2e/ff00aa?text=Drawing+Demo" width="70%" />
-
-</div>
 
 > Replace placeholder images with actual project screenshots or GIFs.
 
